@@ -27,4 +27,24 @@ async function postPredictHandler(request, h) {
     response.code(201);
     return response;
 }
-module.exports = postPredictHandler;
+
+async function getPredictHandler(request, h) {
+    const { Firestore } = require('@google-cloud/firestore')
+    const db = new Firestore();
+
+    const predictCollection = db.collection('prediction');
+    const snapshot = await predictCollection.get();
+
+    const data = snapshot.docs.map(doc => doc.data());
+
+    const response = h.response({
+        status: 'success',
+        data
+    })
+
+    response.code(200);
+    return response;
+
+}
+
+module.exports = { postPredictHandler, getPredictHandler };
